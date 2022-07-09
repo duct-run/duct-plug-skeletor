@@ -1,0 +1,63 @@
+# vim: set ft=sh syn=bash :
+# shellcheck shell=bash
+
+#
+# Copyright (C) 2022 Chris 'sh0shin' Frage
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License, version 3,
+# as published by the Free Software Foundation.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with this program. If not, see <https://www.gnu.org/licenses/>.
+#
+
+# duct-skeletor
+# Hello, Skeletor here! Example Skeleton for duct plugins.
+
+# skeletor
+
+# Skeletor options (defaults).
+declare -r -a _DUCT_SKELETOR_OPTIONS=(
+  --foo
+  --bar
+)
+
+# Skeletor list (defaults).
+declare -r -a _DUCT_SKELETOR_LIST=()
+
+# Skeletor options.
+declare -g -a DUCT_SKELETOR_OPTIONS=( "${DUCT_SKELETOR_OPTIONS[@]:-${_DUCT_SKELETOR_OPTIONS[@]}}" )
+
+# shellcheck disable=SC2206
+# Skeleter list.
+declare -g -a DUCT_SKELETOR_LIST=( ${DUCT_SKELETOR_LIST[@]:-${_DUCT_SKELETOR_LIST[@]}} )
+
+# Skeletor other.
+declare -g DUCT_SKELETOR_OTHER="${DUCT_SKELETOR_OTHER:-}"
+
+# Skeletor number.
+declare -g -i DUCT_SKELETOR_NUMBER="${DUCT_SKELETOR_NUMBER:-540}"
+
+# deps: duct-msg
+# intl: false
+# life: skeletor
+# desc: Skeletor function description.
+# opts: <skeletor>
+__duct_skeletor() {
+  local SKELETOR="${1:-}"
+
+  if [[ -z "$SKELETOR" ]]
+  then
+    __duct_msg e "Skeletor error!"
+    return 1
+  fi
+
+  __duct_msg n "Hello, $SKELETOR here!"
+}
+readonly -f __duct_skeletor
