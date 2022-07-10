@@ -6,7 +6,7 @@ Example for duct plugin(s)
 
 ## License
 
-The `duct-plug-main` is licensed under the GNU Affero General Public License v3.
+The `duct-plug-skeletor` is licensed under the GNU Affero General Public License v3.
 
 ```txt
 Copyright (C) 2022 Chris 'sh0shin' Frage
