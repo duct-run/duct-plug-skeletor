@@ -51,6 +51,8 @@ declare -g -i DUCT_SKELETOR_NUMBER="${DUCT_SKELETOR_NUMBER:-540}"
 # opts: <skeletor>
 __duct_skeletor() {
   local SKELETOR="${1:-}"
+  shift
+  local OPTS=( "$@" )
 
   if [[ -z "$SKELETOR" ]]
   then
@@ -58,6 +60,6 @@ __duct_skeletor() {
     return 1
   fi
 
-  __duct_msg n "Hello, $SKELETOR here!"
+  __duct_msg n "Hello, $SKELETOR here! (${OPTS[*]})"
 }
 readonly -f __duct_skeletor
