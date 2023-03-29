@@ -1,8 +1,8 @@
-# vim: set ft=sh syn=bash :
+# vim: set ft=sh syn=bash cc=160 :
 # shellcheck shell=bash
 
 #
-# Copyright (C) 2022 Chris 'sh0shin' Frage
+# Copyright (C) 2022-2023 Chris 'sh0shin' Frage
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License, version 3,
@@ -17,49 +17,64 @@
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
 #
 
-# duct-skeletor
-# Hello, Skeletor here! Example Skeleton for duct plugins.
+# @plug duct-skeletor                                                                                         # ; Plugin name (same as filename).
+# @desc Hello, Skeletor here!                                                                                 # ; Plugin description.
 
-# skeletor
+# @pvar Plugin global variable.
+declare -g DUCT_SKELETOR_GLOBAL="${DUCT_SKELETOR_GLOBAL:-}"                                                   # ; Global plugin variable.
 
-# Skeletor options (defaults).
-declare -r -a _DUCT_SKELETOR_OPTIONS=(
-  --foo
-  --bar
+# @func duct skeletor say                                                                                     # ; Function name (without `__` & `_`)
+
+# @fvar Skeletor say options (defaults.)                                                                      # ; Function variable description.
+declare -r -a _DUCT_SKELETOR_SAY_OPTIONS=()                                                                   # ; Readonly array defaults and internals.
+
+# @fvar Skeletor say binary.
+declare -g DUCT_SKELETOR_SAY_BINARY="${DUCT_SKELETOR_SAY_BINARY:-"say"}"                                      # ; Use long names for option variables.
+                                                                                                              # ; Setting a sane default.
+# @fvar Skeletor say string.
+declare -g DUCT_SKELETOR_SAY_MESSAGE="${DUCT_SKELETOR_SAY_MESSAGE:-"Hello, Skeletor here!"}"
+
+# @fvar Skeletor say voice.
+declare -g DUCT_SKELETOR_SAY_VOICE="${DUCT_SKELETOR_SAY_VOICE:-"Albert"}"
+
+# shellcheck disable=SC2206                                                                                   # ; Disable quote check for empty array defaults!
+# @fvar Skeletor say options.
+declare -g -a DUCT_SKELETOR_SAY_OPTIONS=( ${DUCT_SKELETOR_SAY_OPTIONS[@]:-${_DUCT_SKELETOR_SAY_OPTIONS[@]}} ) # ; Don't quote empty array defaults!
+
+# @desc Let skeletor say.                                                                                     # ; Function description.
+# @intl false                                                                                                 # ; Internal function only?
+# @life skeletor                                                                                              # ; Lifetime for deprecation etc.
+# @deps duct-msg duct-run                                                                                     # ; Plugin dependencies.
+# @opts [string]                                                                                              # ; Optional options use `[]`, required use `<>`.
+__duct_skeletor_say() {
+  local SKELETOR_SAY_MSG="${1:-${DUCT_SKELETOR_SAY_MESSAGE}}"                                                 # ; Declare all function variables as local!
+                                                                                                              # ; Short names are allowed within the function.
+  local -a SKELETOR_SAY_OPTS=(
+    --voice="$DUCT_SKELETOR_SAY_VOICE"
+    "${DUCT_SKELETOR_SAY_OPTIONS[@]}"
+  )
+
+  __duct_run "$DUCT_SKELETOR_SAY_BINARY" "${SKELETOR_SAY_OPTS[@]}" "$SKELETOR_SAY_MSG"                        # ; Use `__duct_run` to execute commands.
+}
+
+# @func duct skeletor load                                                                                    # ; Loader function (called by `duct-plug`) .
+
+# @fvar List of skeletor requirements (readonly).
+declare -r -a _DUCT_SKELETOR_LOAD_REQUIREMENTS=(
+  "$DUCT_SKELETOR_SAY_BINARY"                                                                                 # ; Inherit required binaries.
 )
 
-# Skeletor list (defaults).
-declare -r -a _DUCT_SKELETOR_LIST=()
+# @desc Check for duct-skeletor requirements.
+# @intl true                                                                                                  # ; Internal function!
+# @life skeletor
+# @deps duct-msg
+# @opts
+__duct_skeletor_load() {
+  __duct_intl                                                                                                 # ; Run `__duct_intl` to avoid external calls!
 
-# Skeletor options.
-declare -g -a DUCT_SKELETOR_OPTIONS=( "${DUCT_SKELETOR_OPTIONS[@]:-${_DUCT_SKELETOR_OPTIONS[@]}}" )
+  local SKELETOR_LOAD_RC=0
 
-# shellcheck disable=SC2206
-# Skeleter list.
-declare -g -a DUCT_SKELETOR_LIST=( ${DUCT_SKELETOR_LIST[@]:-${_DUCT_SKELETOR_LIST[@]}} )
+  __duct_bin_check "${_DUCT_SKELETOR_LOAD_REQUIREMENTS[@]}" || SKELETOR_LOAD_RC=$?                            # ; Check requirements.
 
-# Skeletor other.
-declare -g DUCT_SKELETOR_OTHER="${DUCT_SKELETOR_OTHER:-}"
-
-# Skeletor number.
-declare -g -i DUCT_SKELETOR_NUMBER="${DUCT_SKELETOR_NUMBER:-540}"
-
-# deps: duct-msg
-# intl: false
-# life: skeletor
-# desc: Skeletor function description.
-# opts: <skeletor>
-__duct_skeletor() {
-  local SKELETOR="${1:-}"
-  shift
-  local OPTS=( "$@" )
-
-  if [[ -z "$SKELETOR" ]]
-  then
-    __duct_msg e "Skeletor error!"
-    return 1
-  fi
-
-  __duct_msg n "Hello, $SKELETOR here! (${OPTS[*]})"
+  return $SKELETOR_LOAD_RC
 }
-readonly -f __duct_skeletor
